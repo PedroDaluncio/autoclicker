@@ -62,6 +62,7 @@ class AutoClicker:
         return {'end program': end_program_hotkey,
                 'pause/unpause': pause_unpause_program}
 
-auto_clicker = AutoClicker(0.01)
-auto_clicker.set_hotkeys(auto_clicker.get_hotkeys())
-auto_clicker.start_program()
+if __name__ == 'main':
+    auto_clicker = AutoClicker(0.01)
+    auto_clicker.set_hotkeys(auto_clicker.get_hotkeys())
+    auto_clicker.start_program()
