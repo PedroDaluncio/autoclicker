@@ -4,6 +4,9 @@ from tkinter import messagebox
 
 class AutoClickerView():
 
+    def __init__(self):
+        self.values = []
+
     def main_screen(self):
 
         main_screen = tk.Tk()
@@ -16,7 +19,7 @@ class AutoClickerView():
         end_button = tk.Button(main_screen, text="End", command=lambda: self.end_program(main_screen))
         end_button.pack(pady=10)
 
-        config_button = tk.Button(main_screen, text="Config", command=lambda: self.open_config(main_screen))
+        config_button = tk.Button(main_screen, text="Config", command=lambda: print(self.open_config(main_screen)))
         config_button.pack(pady=10)
 
         main_screen.mainloop()
@@ -27,7 +30,7 @@ class AutoClickerView():
     def end_program(self, screen):
         screen.destroy()
 
-    def open_config(self, main_screen):
+    def open_config(self, main_screen: tk.Frame, click_interval: float = 0.1, unpause_pause_key: str = "F7", end_key:str = "F8"):
         # Criando uma nova janela de configurações
         config_screen = tk.Toplevel(main_screen)
         config_screen.title("Configs")
@@ -37,42 +40,33 @@ class AutoClickerView():
         label = tk.Label(config_screen, text="Opções de Configurações")
         label.pack(pady=20)
 
-        def salvar_config():
-            messagebox.showinfo("Configurações", "Configurações salvas!")
-            config_screen.destroy()
-
-        salvar_btn = tk.Button(config_screen, text="Salvar", command=salvar_config)
-        salvar_btn.pack(pady=10)
-    def abrir_configuracoes(self, val1, val2, val3):
-        # Criar a janela de configurações
-        janela_configuracoes = tk.Toplevel(self.main_screen)
-        janela_configuracoes.title("Configurações")
-        janela_configuracoes.geometry("300x200")
+        # salvar_btn = tk.Button(config_screen, text="Salvar", command=salvar_config)
+        # salvar_btn.pack(pady=10)
 
         # Criar entradas com valores padrões
-        label1 = tk.Label(janela_configuracoes, text="Config 1")
+        label1 = tk.Label(config_screen, text="Click Interval: ")
         label1.pack(pady=5)
-        input1 = tk.Entry(janela_configuracoes)
+        input1 = tk.Entry(config_screen)
         input1.pack(pady=5)
-        input1.insert(0, val1)  # Definindo valor padrão
+        input1.insert(0, click_interval)  # Definindo valor padrão
 
-        label2 = tk.Label(janela_configuracoes, text="Config 2")
+        label2 = tk.Label(config_screen, text="Pause/Unpause key: ")
         label2.pack(pady=5)
-        input2 = tk.Entry(janela_configuracoes)
+        input2 = tk.Entry(config_screen)
         input2.pack(pady=5)
-        input2.insert(0, val2)  # Definindo valor padrão
+        input2.insert(0, unpause_pause_key)  # Definindo valor padrão
 
-        label3 = tk.Label(janela_configuracoes, text="Config 3")
+        label3 = tk.Label(config_screen, text="end program key: ")
         label3.pack(pady=5)
-        input3 = tk.Entry(janela_configuracoes)
+        input3 = tk.Entry(config_screen)
         input3.pack(pady=5)
-        input3.insert(0, val3)  # Definindo valor padrão
+        input3.insert(0, end_key)  # Definindo valor padrão
 
         # Botão para salvar as configurações
-        save_button = tk.Button(janela_configuracoes, text="Salvar",
-                                command=lambda: self.salvar_config(input1.get(), input2.get(), input3.get()))
+        save_button = tk.Button(config_screen, text="Salvar", command=lambda: self.destroy_window(config_screen, [click_interval, unpause_pause_key, end_key]))
         save_button.pack(pady=10)
 
-
-a = AutoClickerView()
-a.main_screen()
+    def destroy_window(self, window, values):
+        self.values = values
+        print(self.values)
+        window.destroy()

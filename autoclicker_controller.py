@@ -1,12 +1,14 @@
 from time import sleep
 from keyboard import add_hotkey
 from mouse import click
+from autoclicker_view import AutoClickerView
 
 class AutoClicker:
-    def __init__(self, time: float):
+    def __init__(self):
         self.__is_on = True
         self.__is_paused = True
-        self.__time_between_clicks = time
+        self.__time_between_clicks = 0
+        self.__screen = AutoClickerView()
 
     def start_program(self):
         """
@@ -14,10 +16,13 @@ class AutoClicker:
         if isn't, calls the left_click method.
         """
         print("starting program...")
-        while self.__is_on:
-            if not self.__is_paused:
-                self.left_click()
-            sleep(self.__time_between_clicks)
+
+        self.__screen.main_screen()
+        if self.__screen.start_program():
+            while self.__is_on:
+                if not self.__is_paused:
+                    self.left_click()
+                sleep(self.__time_between_clicks)
 
     def end_program(self):
         """
@@ -62,7 +67,6 @@ class AutoClicker:
         return {'end program': end_program_hotkey,
                 'pause/unpause': pause_unpause_program}
 
-if __name__ == 'main':
-    auto_clicker = AutoClicker(0.01)
-    auto_clicker.set_hotkeys(auto_clicker.get_hotkeys())
-    auto_clicker.start_program()
+auto_clicker = AutoClicker()
+auto_clicker.start_program()
+
