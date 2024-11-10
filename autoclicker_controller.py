@@ -1,14 +1,23 @@
 from time import sleep
+import json
 from keyboard import add_hotkey
 from mouse import click
-from autoclicker_view import AutoClickerView
+
 
 class AutoClicker:
     def __init__(self):
         self.__is_on = True
         self.__is_paused = True
-        self.__time_between_clicks = 0
-        self.__screen = AutoClickerView()
+        self.__data = self.__read_file()
+
+    def __read_file(self):
+        with open("config.json", "r", encoding="UTF-8") as file:
+            data = json.load(file)
+            return data
+
+    def __write_file(self, data_json: dict):
+        with open("config.json", "w", encoding="UTF-8") as file:
+            json.dump(data_json, file, indent=4, ensure_ascii=False)
 
     def start_program(self):
         """
@@ -16,13 +25,11 @@ class AutoClicker:
         if isn't, calls the left_click method.
         """
         print("starting program...")
-
-        self.__screen.main_screen()
-        if self.__screen.start_program():
-            while self.__is_on:
-                if not self.__is_paused:
-                    self.left_click()
-                sleep(self.__time_between_clicks)
+        self.set_hotkeys()
+        while self.__is_on:
+            if not self.__is_paused:
+                self.left_click()
+            sleep(self.__data["time_between_clicks"])
 
     def end_program(self):
         """
@@ -47,26 +54,27 @@ class AutoClicker:
         """
         click()
 
-    def set_hotkeys(self, keys: dict):
+    def set_hotkeys(self):
         """
         method that set the hotkeys to end, pause and unpause the program
         """
-        add_hotkey(keys['end program'],
-                   auto_clicker.end_program)
-        add_hotkey(keys['pause/unpause'],
-                   auto_clicker.pause_and_unpause_program)
+        add_hotkey(self.__data['end_program_hotkey'],
+                   self.end_program)
+        add_hotkey(self.__data['pause_unpause_program'],
+                   self.pause_and_unpause_program)
 
     def get_hotkeys(self):
         """
         method that get the hotkeys to end, pause and unpause the program
         """
-        end_program_hotkey = input(
+        self.__data["end_program_hotkey"] = input(
             'Type the hotkey to end the program: ')
-        pause_unpause_program = input(
+        self.__data["pause_unpause_program"] = input(
             'Type the hotkey to pause/unpause the program: ')
-        return {'end program': end_program_hotkey,
-                'pause/unpause': pause_unpause_program}
+        self.set_hotkeys()
+        self.__write_file(self.__data)
 
-auto_clicker = AutoClicker()
-auto_clicker.start_program()
 
+if __name__ == '__main__':
+    auto_clicker = AutoClicker()
+    auto_clicker.start_program()
